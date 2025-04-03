@@ -1,6 +1,7 @@
 package com.itau.efetuartransacao.application.controller;
 
 import com.itau.efetuartransacao.domain.model.Transacao;
+import com.itau.efetuartransacao.domain.service.ITransacaoService;
 import com.itau.efetuartransacao.domain.service.TransacaoService;
 import com.itau.efetuartransacao.application.dto.TransacaoRequest;
 import jakarta.validation.Valid;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class TransacaoController {
 
     @Autowired
-    private TransacaoService transacaoService;
+    private ITransacaoService transacaoService;
 
     /**
      * Endpoint para efetuar uma transação.

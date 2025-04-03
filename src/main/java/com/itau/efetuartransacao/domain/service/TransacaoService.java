@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-public class TransacaoService {
+public class TransacaoService implements ITransacaoService {
 
     //@Autowired
     //private ContaRepository contaRepository;
     @Autowired
-    private ContaProvider contaProvider;
+    private IContaProvider contaProvider;
 
     @Autowired
     private TransacaoRepository transacaoRepository;

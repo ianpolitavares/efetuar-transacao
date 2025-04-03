@@ -1,7 +1,7 @@
 package com.itau.efetuartransacao.infra.provider;
 
 import com.itau.efetuartransacao.domain.model.Conta;
-import com.itau.efetuartransacao.domain.service.ContaProvider;
+import com.itau.efetuartransacao.domain.service.IContaProvider;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class InMemoryContaProvider implements ContaProvider {
+public class InMemoryContaProvider implements IContaProvider {
 
     private final Map<String, Conta> contasMap = new HashMap<>();
 
