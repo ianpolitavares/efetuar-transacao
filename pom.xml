@@ -95,6 +95,17 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
+
+
         <!-- <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
@@ -116,6 +127,57 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Teste Mutante -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.15.0</version>
+                <configuration>
+                    <targetClasses>
+                        <param>com.itau.efetuartransacao.domain.service.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.itau.efetuartransacao.domain.service.*</param>
+                    </targetTests>
+                    <mutators>
+                        <mutator>STRONGER</mutator>
+                    </mutators>
+                    <outputFormats>
+                        <param>HTML</param>
+                    </outputFormats>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.15.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetClasses>
+                        <param>com.itau.efetuartransacao.domain.service.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.itau.efetuartransacao.domain.service.*</param>
+                    </targetTests>
+                    <mutators>
+                        <mutator>STRONGER</mutator>
+                    </mutators>
+                    <outputFormats>
+                        <param>HTML</param>
+                    </outputFormats>
+                    <testPlugin>junit5</testPlugin>
+                </configuration>
+            </plugin>
+
+
         </plugins>
     </build>
 

@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Controller responsável por lidar com requisições relacionadas a transações.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/transacoes")
 public class TransacaoController {
@@ -28,11 +30,19 @@ public class TransacaoController {
      */
     @PostMapping
     public ResponseEntity<Transacao> efetuarTransacao(@Valid @RequestBody TransacaoRequest transacaoRequest) {
+
+        log.info("Iniciando transacao de {} -> {} | valor: {}",
+                transacaoRequest.getIdContaOrigem(),
+                transacaoRequest.getIdContaDestino(),
+                transacaoRequest.getValor());
+
         Transacao transacao = transacaoService.efetuarTransacao(
                 transacaoRequest.getIdContaOrigem(),
                 transacaoRequest.getIdContaDestino(),
                 transacaoRequest.getValor()
         );
+
+        log.info("Transacao finalizada: {}", transacao);
         //return ResponseEntity.status(HttpStatus.OK).body(transacao);
         return ResponseEntity.ok(transacao);
     }

@@ -18,10 +18,10 @@ public class TransacaoRequest {
     @NotBlank(message = "O id da conta Origem é obrigatório.")
     private String idContaOrigem;
 
-    @NotBlank(message = "O id da conta Destino é obrigatório.")
+    @NotBlank(message = "O id da conta Destino e obrigatorio.")
     private String idContaDestino;
 
-    @NotNull(message = "O valor da transação não pode ser nulo.")
-    @Positive(message = "O valor da transação deve ser maior que zero.")
+    @NotNull(message = "O valor da transacao nao pode ser nulo.")
+    @Positive(message = "O valor da transacao deve ser maior que zero.")
     private Double valor;
 }
