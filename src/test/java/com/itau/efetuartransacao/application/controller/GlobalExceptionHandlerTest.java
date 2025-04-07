@@ -1,0 +1,82 @@
+package com.itau.efetuartransacao.application.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itau.efetuartransacao.application.dto.TransacaoRequest;
+import com.itau.efetuartransacao.domain.service.ITransacaoService;
+import com.itau.efetuartransacao.exception.ContaNaoEncontradaException;
+import com.itau.efetuartransacao.exception.SaldoInsuficienteException;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(TransacaoController.class)
+public class GlobalExceptionHandlerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private ITransacaoService transacaoService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    public void testContaNaoEncontradaException() throws Exception {
+        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any()))
+                .thenThrow(new ContaNaoEncontradaException("Conta não encontrada"));
+
+        TransacaoRequest request = new TransacaoRequest();
+        request.setIdContaOrigem("999");
+        request.setIdContaDestino("2");
+        request.setValor(100.0);
+
+        mockMvc.perform(post("/api/v1/transacoes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Conta não encontrada"));
+    }
+
+    @Test
+    public void testSaldoInsuficienteException() throws Exception {
+        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any()))
+                .thenThrow(new SaldoInsuficienteException("Saldo insuficiente"));
+
+        TransacaoRequest request = new TransacaoRequest();
+        request.setIdContaOrigem("1");
+        request.setIdContaDestino("2");
+        request.setValor(999.0);
+
+        mockMvc.perform(post("/api/v1/transacoes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string("Saldo insuficiente"));
+    }
+
+    @Test
+    public void testErroInternoGenerico() throws Exception {
+        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any()))
+                .thenThrow(new RuntimeException("Erro inesperado"));
+
+        TransacaoRequest request = new TransacaoRequest();
+        request.setIdContaOrigem("1");
+        request.setIdContaDestino("2");
+        request.setValor(150.0);
+
+        mockMvc.perform(post("/api/v1/transacoes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string("Erro inesperado: Erro inesperado"));
+    }
+}

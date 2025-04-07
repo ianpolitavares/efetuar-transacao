@@ -35,8 +35,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SaldoInsuficienteException.class)
     public ResponseEntity<String> handleSaldoInsuficiente(SaldoInsuficienteException ex) {
         log.warn("Saldo insuficiente: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
     }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {

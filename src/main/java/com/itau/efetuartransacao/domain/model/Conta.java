@@ -24,7 +24,6 @@ public class Conta {
      * @return true se é possível efetuar a transação; false caso contrário
      */
     public boolean podeEfetuarTransacao(Double valor) {
-        // Se o valor for maior que (saldo + limite), não pode efetuar
         return (valor <= (this.saldo + this.limite));
     }
 
@@ -36,7 +35,6 @@ public class Conta {
      */
     public void debitar(Double valor) {
         if (valor <= this.saldo) {
-            // Debita direto do saldo
             this.saldo -= valor;
         } else {
             // Usa parte do saldo e parte do limite
