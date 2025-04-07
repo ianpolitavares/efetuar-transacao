@@ -44,6 +44,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
@@ -135,9 +141,12 @@
                 </dependencies>
                 <configuration>
                     <targetClasses>
-                        <param>com.itau.efetuartransacao.domain.service.*</param>
-                        <param>com.itau.efetuartransacao.application.controller.*</param>
-                        <param>com.itau.efetuartransacao.infra.provider.*</param>
+                        <param>com.itau.efetuartransacao.adapter.in.rest.*</param>
+                        <param>com.itau.efetuartransacao.adapter.out.fake.*</param>
+                        <param>com.itau.efetuartransacao.adapter.out.persistence.*</param>
+                        <param>com.itau.efetuartransacao.application.usecase.*</param>
+                        <param>com.itau.efetuartransacao.domain.exception.*</param>
+                        <param>com.itau.efetuartransacao.domain.model.*</param>
                     </targetClasses>
                     <targetTests>
                         <param>com.itau.efetuartransacao.*</param>
@@ -148,6 +157,16 @@
                     <outputFormats>
                         <param>HTML</param>
                     </outputFormats>
+                    <excludedClasses>
+                        <param>com.itau.efetuartransacao.domain.model.Transacao</param>
+                    </excludedClasses>
+                    <excludedMethods>
+                        <param>com.itau.efetuartransacao.domain.model.Conta::&lt;init&gt;</param>
+                        <param>equals</param>
+                        <param>hashCode</param>
+                        <param>toString</param>
+                        <param>canEqual</param>
+                    </excludedMethods>
                     <!--<junit5Plugin>true</junit5Plugin>-->
                 </configuration>
             </plugin>
