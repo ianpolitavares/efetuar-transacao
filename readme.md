@@ -1,5 +1,4 @@
 # Efetuar Transação
-
 Sistema backend RESTful para efetuação de transações financeiras entre contas, com arquitetura hexagonal, Resilience4j, testes unitários, mutantes e concorrentes.
 
 ---

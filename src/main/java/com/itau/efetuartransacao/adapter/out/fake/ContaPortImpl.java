@@ -46,7 +46,7 @@ public class ContaPortImpl implements ContaPort {
         contasMap.put(conta.getIdConta(), conta);
     }
 
-    public Conta fallbackFindById(String idConta, Throwable t) {
+    public void fallbackFindById(String idConta, Throwable t) {
         log.error("Fallback ativado para findById: {}", t.getMessage());
         throw new RuntimeException("Serviço de contas indisponível no momento");
     }

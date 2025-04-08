@@ -12,14 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 * Em um cenário real, aqui ficaria a implementação com o banco de dados
 * Por exemplo: TransacaoRepository extends JpaRepository
 * */
-
 @Repository
 public class TransacaoRepository implements TransacaoStoragePort {
 
-    // Antes: Map não thread-safe
-    // private final Map<String, Transacao> transacoesMap = new HashMap<>();
-
-    // Agora: Map thread-safe
     private final Map<String, Transacao> transacoesMap = new ConcurrentHashMap<>();
 
     public void save(Transacao transacao) {
