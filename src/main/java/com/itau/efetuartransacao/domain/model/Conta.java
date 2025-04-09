@@ -1,47 +1,57 @@
 package com.itau.efetuartransacao.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
 
-/**
- * Classe que representa a conta do cliente.
- */
-@Data
+@Entity
+@Table(name = "contas")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Conta {
 
+    @Id
     private String idConta;
+
     private Double saldo;
+
     private Double limite;
 
+    private Double limiteUtilizado;
+
     /**
-     * Verifica se a conta possui saldo e/ou limite suficiente
-     * para efetuar a transação.
-     *
-     * @param valor Valor da transação
-     * @return true se é possível efetuar a transação; false caso contrário
+     * Verifica se a conta pode efetuar uma transação considerando o saldo + limite disponível.
      */
     public boolean podeEfetuarTransacao(Double valor) {
-        return (valor <= (this.saldo + this.limite));
+        double limiteDisponivel = limite - limiteUtilizado;
+        return valor <= (saldo + limiteDisponivel);
     }
 
     /**
-     * Debita o valor do saldo, levando em conta o limite
-     * caso o saldo não seja suficiente.
-     *
-     * @param valor Valor a ser debitado
+     * Debita o valor da conta, usando saldo e depois o limite, se necessário.
      */
     public void debitar(Double valor) {
-        if (valor <= this.saldo) {
-            this.saldo -= valor;
+        if (valor <= saldo) {
+            saldo -= valor;
         } else {
-            // Usa parte do saldo e parte do limite
-            double resto = valor - this.saldo;
-            this.saldo = 0.0;
-            this.limite -= resto;
-
+            double restante = valor - saldo;
+            saldo = 0.0;
+            limiteUtilizado += restante;
         }
+    }
+
+    /**
+     * Credita o valor na conta. Primeiro, quita o limite utilizado; o restante vai para o saldo.
+     */
+    public void creditar(Double valor) {
+        if (limiteUtilizado > 0) {
+            double quitado = Math.min(valor, limiteUtilizado);
+            limiteUtilizado -= quitado;
+            valor -= quitado;
+        }
+        saldo += valor;
     }
 }

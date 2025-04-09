@@ -24,10 +24,15 @@ public class ContaRepositoryAdapter implements ContaPort {
     @Retry(name = "contaProvider")
     @CircuitBreaker(name = "contaProvider", fallbackMethod = "fallbackFindById")
     public Conta findById(String idConta) {
-        log.info("Buscnado conta {}", idConta);
+        log.info("Buscando conta {}", idConta);
         ContaEntity entity = repository.findById(idConta)
                 .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
-        return new Conta(entity.getIdConta(), entity.getSaldo(), entity.getLimite());
+        return new Conta(
+                entity.getIdConta(),
+                entity.getSaldo(),
+                entity.getLimite(),
+                entity.getLimiteUtilizado()
+        );
     }
 
     @Override
@@ -35,7 +40,22 @@ public class ContaRepositoryAdapter implements ContaPort {
     @CircuitBreaker(name = "contaProvider", fallbackMethod = "fallbackUpdate")
     public void update(Conta conta) {
         log.info("Atualizando conta {}", conta.getIdConta());
-        ContaEntity entity = new ContaEntity(conta.getIdConta(), conta.getSaldo(), conta.getLimite());
+        ContaEntity entity = new ContaEntity(
+                conta.getIdConta(),
+                conta.getSaldo(),
+                conta.getLimite(),
+                conta.getLimiteUtilizado()
+        );
         repository.save(entity);
+    }
+
+    public Conta fallbackFindById(String idConta, Throwable t) {
+        log.error("Fallback ativado para findById: {}", t.getMessage());
+        throw new RuntimeException("Serviço de contas indisponível");
+    }
+
+    public void fallbackUpdate(Conta conta, Throwable t) {
+        log.error("Fallback ativado para update da conta {}: {}", conta.getIdConta(), t.getMessage());
+        throw new RuntimeException("Não foi possível atualizar a conta no momento");
     }
 }

@@ -70,7 +70,7 @@ public class EfetuarTransacaoService implements EfetuarTransacaoUseCase {
 
             try {
                 contaOrigem.debitar(valor);
-                contaDestino.setSaldo(contaDestino.getSaldo() + valor);
+                contaDestino.creditar(valor);
                 contaPort.update(contaOrigem);
                 contaPort.update(contaDestino);
             } catch (Exception e) {

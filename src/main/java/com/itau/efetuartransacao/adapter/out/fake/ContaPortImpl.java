@@ -21,8 +21,8 @@ public class ContaPortImpl implements ContaPort {
 
     @PostConstruct
     public void init() {
-        Conta conta1 = new Conta("12345-6", 1000.0, 500.0);
-        Conta conta2 = new Conta("98765-4", 2000.0, 1000.0);
+        Conta conta1 = new Conta("12345-6", 1000.0, 500.0, 0.0);
+        Conta conta2 = new Conta("98765-4", 2000.0, 1000.0, 0.0);
 
         contasMap.put(conta1.getIdConta(), conta1);
         contasMap.put(conta2.getIdConta(), conta2);

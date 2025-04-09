@@ -35,7 +35,7 @@ public class ContaPortImplTest {
 
     @Test
     public void testUpdateConta() {
-        Conta novaConta = new Conta("99999-9", 300.0, 200.0);
+        Conta novaConta = new Conta("99999-9", 300.0, 200.0,0.0);
         contaProvider.update(novaConta);
 
         Conta recuperada = contaProvider.findById("99999-9");
@@ -57,7 +57,7 @@ public class ContaPortImplTest {
     @Test
     public void testFallbackUpdate() {
         ContaPortImpl contaPort = new ContaPortImpl();
-        Conta conta = new Conta("123", 100.0, 50.0);
+        Conta conta = new Conta("123", 100.0, 50.0,0.0);
 
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
                 contaPort.fallbackUpdate(conta, new RuntimeException("Erro simulado"))

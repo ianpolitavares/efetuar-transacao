@@ -16,5 +16,8 @@ public class ContaEntity {
     private String idConta;
 
     private Double saldo;
+
     private Double limite;
+
+    private Double limiteUtilizado;
 }

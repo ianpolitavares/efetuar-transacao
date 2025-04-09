@@ -45,8 +45,8 @@ public class EfetuarTransacaoServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        contaOrigem = new Conta("1", 100.0, 50.0);
-        contaDestino = new Conta("2", 200.0, 100.0);
+        contaOrigem = new Conta("1", 100.0, 50.0,0.0);
+        contaDestino = new Conta("2", 200.0, 100.0,0.0);
 
         when(meterRegistry.timer(anyString())).thenReturn(timer);
         when(timer.record(any(Supplier.class))).thenAnswer(invocation -> {

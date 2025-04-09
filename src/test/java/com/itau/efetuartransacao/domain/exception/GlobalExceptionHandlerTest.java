@@ -33,7 +33,7 @@ public class GlobalExceptionHandlerTest {
     @Test
     public void testContaNaoEncontradaException() throws Exception {
         Mockito.when(transacaoService.efetuarTransacao(any(), any(), any()))
-                .thenThrow(new ContaNaoEncontradaException("Conta não encontrada"));
+                .thenThrow(new ContaNaoEncontradaException("Conta nao encontrada"));
 
         TransacaoRequest request = new TransacaoRequest();
         request.setIdContaOrigem("999");
@@ -44,7 +44,7 @@ public class GlobalExceptionHandlerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Conta não encontrada"));
+                .andExpect(content().string("Conta nao encontrada"));
     }
 
     @Test
