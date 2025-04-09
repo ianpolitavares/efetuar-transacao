@@ -2,7 +2,8 @@ package com.itau.efetuartransacao.adapter.out.persistence;
 
 import com.itau.efetuartransacao.adapter.out.persistence.entity.ContaEntity;
 import com.itau.efetuartransacao.application.ports.out.ContaPort;
-import com.itau.efetuartransacao.domain.model.Conta;
+import com.itau.efetuartransacao.application.core.domain.exception.ContaNaoEncontradaException;
+import com.itau.efetuartransacao.application.core.domain.model.Conta;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,15 @@ public class ContaRepositoryAdapter implements ContaPort {
 
     @Override
     @Retry(name = "contaProvider")
-    @CircuitBreaker(name = "contaProvider", fallbackMethod = "fallbackFindById")
+    @CircuitBreaker(
+            name = "contaProvider",
+            fallbackMethod = "fallbackFindById"
+    )
     public Conta findById(String idConta) {
         log.info("Buscando conta {}", idConta);
         ContaEntity entity = repository.findById(idConta)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+                .orElseThrow(() -> new ContaNaoEncontradaException(idConta));
+
         return new Conta(
                 entity.getIdConta(),
                 entity.getSaldo(),
@@ -34,6 +39,7 @@ public class ContaRepositoryAdapter implements ContaPort {
                 entity.getLimiteUtilizado()
         );
     }
+
 
     @Override
     @Retry(name = "contaProvider")
@@ -56,6 +62,6 @@ public class ContaRepositoryAdapter implements ContaPort {
 
     public void fallbackUpdate(Conta conta, Throwable t) {
         log.error("Fallback ativado para update da conta {}: {}", conta.getIdConta(), t.getMessage());
-        throw new RuntimeException("Não foi possível atualizar a conta no momento");
+        throw new RuntimeException("Nao foi possível atualizar a conta no momento");
     }
 }

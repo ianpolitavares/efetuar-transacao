@@ -1,13 +1,13 @@
-package com.itau.efetuartransacao.application.usecase;
+package com.itau.efetuartransacao.application.core.usecase;
 
 import com.itau.efetuartransacao.application.ports.out.TransacaoStoragePort;
 import com.itau.efetuartransacao.application.ports.out.ContaPort;
 import com.itau.efetuartransacao.application.ports.in.EfetuarTransacaoUseCase;
-import com.itau.efetuartransacao.domain.model.Conta;
-import com.itau.efetuartransacao.domain.model.Transacao;
-import com.itau.efetuartransacao.domain.model.TransacaoStatus;
-import com.itau.efetuartransacao.domain.exception.ContaNaoEncontradaException;
-import com.itau.efetuartransacao.domain.exception.SaldoInsuficienteException;
+import com.itau.efetuartransacao.application.core.domain.model.Conta;
+import com.itau.efetuartransacao.application.core.domain.model.Transacao;
+import com.itau.efetuartransacao.application.core.domain.model.TransacaoStatus;
+import com.itau.efetuartransacao.application.core.domain.exception.ContaNaoEncontradaException;
+import com.itau.efetuartransacao.application.core.domain.exception.SaldoInsuficienteException;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
@@ -62,7 +62,7 @@ public class EfetuarTransacaoService implements EfetuarTransacaoUseCase {
             }
 
             Transacao transacao = new Transacao();
-            transacao.setIdTransacao(UUID.randomUUID().toString());
+            transacao.setIdTransacao(UUID.randomUUID());
             transacao.setIdContaOrigem(idContaOrigem);
             transacao.setIdContaDestino(idContaDestino);
             transacao.setValor(valor);
@@ -81,7 +81,7 @@ public class EfetuarTransacaoService implements EfetuarTransacaoUseCase {
             transacao.setStatus(TransacaoStatus.CONCLUIDA);
             transacaoStoragePort.save(transacao);
 
-            log.info("Transação {} concluida com sucesso", transacao.getIdTransacao());
+            log.info("Transaçao {} concluida com sucesso", transacao.getIdTransacao());
             return transacao;
         });
     }

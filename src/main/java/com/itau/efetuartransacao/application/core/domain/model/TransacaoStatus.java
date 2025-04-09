@@ -1,4 +1,4 @@
-package com.itau.efetuartransacao.domain.model;
+package com.itau.efetuartransacao.application.core.domain.model;
 
 public enum TransacaoStatus {
     PENDENTE,

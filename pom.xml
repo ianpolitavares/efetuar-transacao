@@ -115,6 +115,10 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
 
         <!-- <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -169,7 +173,9 @@
                         <param>HTML</param>
                     </outputFormats>
                     <excludedClasses>
-                        <param>com.itau.efetuartransacao.domain.model.Transacao</param>
+                        <param>com.itau.efetuartransacao.application.core.domain.model.Transacao</param>
+                        <param>com.itau.efetuartransacao.adapter.out.persistence.entity.ContaEntity</param>
+                        <param>com.itau.efetuartransacao.adapter.out.persistence.entity.TransacaoEntity</param>
                     </excludedClasses>
                     <excludedMethods>
                         <param>com.itau.efetuartransacao.domain.model.Conta::&lt;init&gt;</param>

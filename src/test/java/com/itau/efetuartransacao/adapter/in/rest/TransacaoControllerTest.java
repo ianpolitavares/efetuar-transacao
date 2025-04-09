@@ -3,10 +3,10 @@ package com.itau.efetuartransacao.adapter.in.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itau.efetuartransacao.adapter.in.rest.dto.TransacaoRequest;
 import com.itau.efetuartransacao.application.ports.in.EfetuarTransacaoUseCase;
-import com.itau.efetuartransacao.domain.exception.ContaNaoEncontradaException;
-import com.itau.efetuartransacao.domain.exception.SaldoInsuficienteException;
-import com.itau.efetuartransacao.domain.model.Transacao;
-import com.itau.efetuartransacao.domain.model.TransacaoStatus;
+import com.itau.efetuartransacao.application.core.domain.exception.ContaNaoEncontradaException;
+import com.itau.efetuartransacao.application.core.domain.exception.SaldoInsuficienteException;
+import com.itau.efetuartransacao.application.core.domain.model.Transacao;
+import com.itau.efetuartransacao.application.core.domain.model.TransacaoStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class TransacaoControllerTest {
         request.setValor(150.0);
 
         Transacao mockResponse = new Transacao();
-        mockResponse.setIdTransacao(UUID.randomUUID().toString());
+        mockResponse.setIdTransacao(UUID.randomUUID());
         mockResponse.setIdContaOrigem("1");
         mockResponse.setIdContaDestino("2");
         mockResponse.setValor(150.0);
@@ -80,13 +80,13 @@ public class TransacaoControllerTest {
         request.setValor(100.0);
 
         Mockito.when(transacaoService.efetuarTransacao(any(), any(), any()))
-                .thenThrow(new ContaNaoEncontradaException("Conta não encontrada"));
+                .thenThrow(new ContaNaoEncontradaException("Conta nao encontrada"));
 
         mockMvc.perform(post("/api/v1/transacoes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Conta não encontrada"));
+                .andExpect(content().string("Conta nao encontrada"));
     }
 
     @Test

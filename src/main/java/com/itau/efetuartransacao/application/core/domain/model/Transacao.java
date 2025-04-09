@@ -1,19 +1,17 @@
-package com.itau.efetuartransacao.domain.model;
+package com.itau.efetuartransacao.application.core.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-/**
- * Classe que representa a transação financeira.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transacao {
-    private String idTransacao;
+    private UUID idTransacao;
     private String idContaOrigem;
     private String idContaDestino;
     private Double valor;

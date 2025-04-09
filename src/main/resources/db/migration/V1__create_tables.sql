@@ -1,4 +1,3 @@
--- tabela de contas
 CREATE TABLE IF NOT EXISTS contas (
     id_conta VARCHAR(255) PRIMARY KEY,
     saldo NUMERIC(15, 2) NOT NULL,
@@ -6,7 +5,6 @@ CREATE TABLE IF NOT EXISTS contas (
     limite_utilizado NUMERIC(15, 2) NOT NULL
 );
 
--- tabela de transações
 CREATE TABLE IF NOT EXISTS transacoes (
     id_transacao UUID PRIMARY KEY,
     id_conta_origem VARCHAR(255) NOT NULL,

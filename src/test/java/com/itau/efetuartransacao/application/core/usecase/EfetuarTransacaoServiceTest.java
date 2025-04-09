@@ -1,13 +1,13 @@
-package com.itau.efetuartransacao.application.usecase;
+package com.itau.efetuartransacao.application.core.usecase;
 
 import com.itau.efetuartransacao.application.ports.out.ContaPort;
 import com.itau.efetuartransacao.application.ports.out.TransacaoStoragePort;
-import com.itau.efetuartransacao.application.usecase.EfetuarTransacaoService;
-import com.itau.efetuartransacao.domain.model.Conta;
-import com.itau.efetuartransacao.domain.model.Transacao;
-import com.itau.efetuartransacao.domain.model.TransacaoStatus;
-import com.itau.efetuartransacao.domain.exception.ContaNaoEncontradaException;
-import com.itau.efetuartransacao.domain.exception.SaldoInsuficienteException;
+import com.itau.efetuartransacao.application.core.usecase.EfetuarTransacaoService;
+import com.itau.efetuartransacao.application.core.domain.model.Conta;
+import com.itau.efetuartransacao.application.core.domain.model.Transacao;
+import com.itau.efetuartransacao.application.core.domain.model.TransacaoStatus;
+import com.itau.efetuartransacao.application.core.domain.exception.ContaNaoEncontradaException;
+import com.itau.efetuartransacao.application.core.domain.exception.SaldoInsuficienteException;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.junit.jupiter.api.BeforeEach;

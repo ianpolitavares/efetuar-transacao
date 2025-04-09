@@ -1,6 +1,6 @@
 package com.itau.efetuartransacao.adapter.in.rest;
 
-import com.itau.efetuartransacao.domain.model.Transacao;
+import com.itau.efetuartransacao.application.core.domain.model.Transacao;
 import com.itau.efetuartransacao.application.ports.in.EfetuarTransacaoUseCase;
 import com.itau.efetuartransacao.adapter.in.rest.dto.TransacaoRequest;
 import jakarta.validation.Valid;

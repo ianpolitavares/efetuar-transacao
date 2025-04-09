@@ -1,5 +1,6 @@
 # Efetuar Transação
-Sistema backend RESTful para efetuação de transações financeiras entre contas, com arquitetura hexagonal, Resilience4j, testes unitários, mutantes e concorrentes.
+
+Sistema backend RESTful para efetuação de transações financeiras entre contas, com arquitetura hexagonal, Resilience4j, testes unitários, mutantes, concorrentes e integração com banco de dados PostgreSQL via Docker.
 
 ---
 
@@ -8,14 +9,16 @@ Sistema backend RESTful para efetuação de transações financeiras entre conta
 Este projeto simula uma aplicação de transação bancária, contemplando:
 
 - API REST para efetuar transações
-- Controle de saldo e limite
+- Controle de saldo e limite com controle de limite utilizado
 - Resiliência com Resilience4j (retry + circuit breaker)
 - Observabilidade com Micrometer
 - Arquitetura baseada em portas e adaptadores (hexagonal)
 - Validação robusta de dados com Bean Validation
 - Testes unitários com JUnit + Mockito
 - Testes mutantes com PITest
-- Testes concorrentes
+- Testes concorrentes com simulação de carga
+- Integração com banco PostgreSQL e versionamento de schema com Flyway
+- Inicialização de ambiente com Docker
 
 ---
 
@@ -23,16 +26,17 @@ Este projeto simula uma aplicação de transação bancária, contemplando:
 
 - Java 17
 - Spring Boot 3.0.4
-- Spring Web / AOP / Validation
+- Spring Web / AOP / Validation / Data JPA
+- PostgreSQL
 - Micrometer
 - Resilience4j
+- Flyway
+- Docker / Docker Compose
 - JUnit 5 / Mockito / PITest
 
 ---
 
-## Arquitetura
-
-A aplicação está dividida entre:
+## Arquitetura Hexagonal
 
 ### Core (domínio)
 - `domain.model`: entidades `Conta` e `Transacao`
@@ -45,18 +49,19 @@ A aplicação está dividida entre:
 
 ### Adapters
 - `adapter.in.rest`: controlador REST (`TransacaoController`)
-- `adapter.out.persistence`: repositório de transações (simulado)
-- `adapter.out.fake`: simula serviço externo de contas (`ContaPortImpl`)
+- `adapter.out.persistence`: repositório de transações e contas com Spring Data JPA
 
 ### Observabilidade
-- Micrometer + Timer para medir execução da transação
+- Micrometer + Timer para medir tempo da transação
 
 ### Resiliência
-- Retry e circuit breaker nos acessos a contas (fake)
+- Retry e circuit breaker nos acessos a dados
 
 ---
 
 ## Como executar
+
+### Usando Maven
 
 ```bash
 # 1. Compilar o projeto
@@ -66,7 +71,21 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-Após o start:
+### Usando Docker
+
+```bash
+# Subir banco PostgreSQL
+docker-compose up -d
+```
+
+Certifique-se de que o banco esteja acessível em:
+```
+jdbc:postgresql://localhost:5432/banco
+user: 
+senha: 
+```
+
+A aplicação inicia em:
 ```
 http://localhost:8080/api/v1/transacoes
 ```
@@ -87,7 +106,7 @@ mvn org.pitest:pitest-maven:mutationCoverage
 Gera relatório HTML em `target/pit-reports`
 
 ### Testes concorrentes
-Executados com `TransacaoControllerConcurrencyTest`, simulando requisições paralelas com `ExecutorService`.
+Executados com `TransacaoControllerConcurrencyTest`, simulando concorrência com `ExecutorService`.
 
 ---
 
@@ -95,21 +114,38 @@ Executados com `TransacaoControllerConcurrencyTest`, simulando requisições par
 
 ```mermaid
 sequenceDiagram
-    participant C as Cliente
-    participant API as TransacaoController
-    participant APP as EfetuarTransacaoService
+    participant U as Usuário
+    participant C as TransacaoController (in)
+    participant S as EfetuarTransacaoService (core)
     participant CP as ContaPort
     participant TP as TransacaoStoragePort
+    participant CRA as ContaRepositoryAdapter (out)
+    participant TSA as TransacaoStorageAdapter (out)
 
-    C->>API: POST /api/v1/transacoes
-    API->>APP: efetuarTransacao()
-    APP->>CP: findById(idOrigem)
-    APP->>CP: findById(idDestino)
-    APP->>CP: update(contaOrigem)
-    APP->>CP: update(contaDestino)
-    APP->>TP: save(transacao)
-    APP-->>API: Transacao CONCLUIDA
-    API-->>C: 200 OK + JSON
+    U->>C: POST /api/v1/transacoes
+    C->>S: efetuarTransacao(request)
+
+    S->>CP: findById(idOrigem)
+    CP->>CRA: findById(idOrigem)
+    CRA-->>CP: Conta origem
+
+    S->>CP: findById(idDestino)
+    CP->>CRA: findById(idDestino)
+    CRA-->>CP: Conta destino
+
+    S->>CP: update(contaOrigem)
+    CP->>CRA: save(contaOrigem)
+
+    S->>CP: update(contaDestino)
+    CP->>CRA: save(contaDestino)
+
+    S->>TP: save(transacao)
+    TP->>TSA: save(transacao)
+
+    TSA-->>TP: void
+    TP-->>S: void
+    S-->>C: Transacao CONCLUIDA
+    C-->>U: 200 OK + JSON
 ```
 
 ---
@@ -127,6 +163,7 @@ POST `/api/v1/transacoes`
 ```
 
 Resposta:
+
 ```json
 {
   "idTransacao": "...",
@@ -142,9 +179,7 @@ Resposta:
 
 ## Observabilidade
 
-- Métrica `transacao.executada` com `Micrometer`
-- Pode ser exportada via Actuator ou Prometheus
+- Métrica `transacao.executada` com Micrometer
+- Exportável via Actuator ou Prometheus
 
 ---
-
-

@@ -2,7 +2,7 @@ package com.itau.efetuartransacao.adapter.in.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itau.efetuartransacao.adapter.in.rest.dto.TransacaoRequest;
-import com.itau.efetuartransacao.domain.model.Transacao;
+import com.itau.efetuartransacao.application.core.domain.model.Transacao;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;

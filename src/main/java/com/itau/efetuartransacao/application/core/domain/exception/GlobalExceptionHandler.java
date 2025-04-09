@@ -1,4 +1,4 @@
-package com.itau.efetuartransacao.domain.exception;
+package com.itau.efetuartransacao.application.core.domain.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

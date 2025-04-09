@@ -1,5 +1,6 @@
-package com.itau.efetuartransacao.domain.model;
+package com.itau.efetuartransacao.application.core.domain.model;
 
+import com.itau.efetuartransacao.application.core.domain.model.Conta;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

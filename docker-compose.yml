@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: transacao-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: banco
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: poliian
+    ports:
+      - "5432:5432"
+    #volumes:
+    #  - ./init:/docker-entrypoint-initdb.d
