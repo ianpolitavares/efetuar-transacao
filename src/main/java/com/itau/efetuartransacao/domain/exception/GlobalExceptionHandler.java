@@ -45,4 +45,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Erro inesperado: " + ex.getMessage());
     }
+
+    @ExceptionHandler(LimiteExcedidoException.class)
+    public ResponseEntity<String> handleLimiteExcedido(LimiteExcedidoException ex) {
+        log.warn("Limite excedido: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
+    }
+
 }

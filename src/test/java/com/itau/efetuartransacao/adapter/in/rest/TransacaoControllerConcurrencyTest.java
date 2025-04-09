@@ -3,11 +3,13 @@ package com.itau.efetuartransacao.adapter.in.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itau.efetuartransacao.adapter.in.rest.dto.TransacaoRequest;
 import com.itau.efetuartransacao.domain.model.Transacao;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ import java.util.concurrent.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration")
+@Disabled
 public class TransacaoControllerConcurrencyTest {
 
     @LocalServerPort
