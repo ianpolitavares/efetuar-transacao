@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 * Em um cenário real, aqui ficaria a implementação com o banco de dados
 * Por exemplo: TransacaoRepository extends JpaRepository
 * */
-@Repository
+
 public class TransacaoRepository implements TransacaoStoragePort {
 
     private final Map<String, Transacao> transacoesMap = new ConcurrentHashMap<>();
