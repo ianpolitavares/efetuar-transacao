@@ -1,10 +1,10 @@
 package com.itau.efetuartransacao.adapter.in.rest.dto;
 
+import com.itau.efetuartransacao.adapter.in.rest.dto.request.TransacaoRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.validation.*;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
 

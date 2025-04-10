@@ -1,8 +1,9 @@
-package com.itau.efetuartransacao.adapter.in.rest;
+package com.itau.efetuartransacao.adapter.in.rest.controller;
 
+import com.itau.efetuartransacao.adapter.in.rest.dto.response.TransacaoResponse;
 import com.itau.efetuartransacao.application.core.domain.model.Transacao;
 import com.itau.efetuartransacao.application.ports.in.EfetuarTransacaoUseCase;
-import com.itau.efetuartransacao.adapter.in.rest.dto.TransacaoRequest;
+import com.itau.efetuartransacao.adapter.in.rest.dto.request.TransacaoRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class TransacaoController {
      * @return Detalhes da transação realizada (ou erro, em caso de falha)
      */
     @PostMapping
-    public ResponseEntity<Transacao> efetuarTransacao(@Valid @RequestBody TransacaoRequest transacaoRequest) {
+    public ResponseEntity<TransacaoResponse> efetuarTransacao(@Valid @RequestBody TransacaoRequest transacaoRequest) {
 
         log.info("Iniciando transacao de {} -> {} | valor: {}",
                 transacaoRequest.getIdContaOrigem(),
@@ -42,6 +43,6 @@ public class TransacaoController {
 
         log.info("Transacao finalizada: {}", transacao);
         //return ResponseEntity.status(HttpStatus.OK).body(transacao);
-        return ResponseEntity.ok(transacao);
+        return ResponseEntity.ok(TransacaoResponse.fromDomain(transacao));
     }
 }

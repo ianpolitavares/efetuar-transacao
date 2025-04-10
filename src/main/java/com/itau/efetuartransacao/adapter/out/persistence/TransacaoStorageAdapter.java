@@ -1,6 +1,7 @@
 package com.itau.efetuartransacao.adapter.out.persistence;
 
 import com.itau.efetuartransacao.adapter.out.persistence.entity.TransacaoEntity;
+import com.itau.efetuartransacao.adapter.out.persistence.repositories.TransacaoJpaRepository;
 import com.itau.efetuartransacao.application.ports.out.TransacaoStoragePort;
 import com.itau.efetuartransacao.application.core.domain.model.Transacao;
 import org.springframework.context.annotation.Primary;

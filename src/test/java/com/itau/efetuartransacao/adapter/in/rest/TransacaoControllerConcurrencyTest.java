@@ -1,7 +1,7 @@
 package com.itau.efetuartransacao.adapter.in.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itau.efetuartransacao.adapter.in.rest.dto.TransacaoRequest;
+import com.itau.efetuartransacao.adapter.in.rest.dto.request.TransacaoRequest;
 import com.itau.efetuartransacao.application.core.domain.model.Transacao;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

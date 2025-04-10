@@ -1,6 +1,7 @@
 package com.itau.efetuartransacao.adapter.out.persistence;
 
 import com.itau.efetuartransacao.adapter.out.persistence.entity.ContaEntity;
+import com.itau.efetuartransacao.adapter.out.persistence.repositories.ContaJpaRepository;
 import com.itau.efetuartransacao.application.core.domain.exception.ContaNaoEncontradaException;
 import com.itau.efetuartransacao.application.core.domain.model.Conta;
 import org.junit.jupiter.api.BeforeEach;

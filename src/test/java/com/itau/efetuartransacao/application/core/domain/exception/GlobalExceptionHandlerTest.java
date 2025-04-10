@@ -1,11 +1,9 @@
 package com.itau.efetuartransacao.application.core.domain.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itau.efetuartransacao.adapter.in.rest.TransacaoController;
-import com.itau.efetuartransacao.adapter.in.rest.dto.TransacaoRequest;
+import com.itau.efetuartransacao.adapter.in.rest.controller.TransacaoController;
+import com.itau.efetuartransacao.adapter.in.rest.dto.request.TransacaoRequest;
 import com.itau.efetuartransacao.application.ports.in.EfetuarTransacaoUseCase;
-import com.itau.efetuartransacao.application.core.domain.exception.ContaNaoEncontradaException;
-import com.itau.efetuartransacao.application.core.domain.exception.SaldoInsuficienteException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

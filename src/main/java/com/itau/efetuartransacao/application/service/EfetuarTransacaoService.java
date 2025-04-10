@@ -1,4 +1,4 @@
-package com.itau.efetuartransacao.application.core.usecase;
+package com.itau.efetuartransacao.application.service;
 
 import com.itau.efetuartransacao.application.ports.out.TransacaoStoragePort;
 import com.itau.efetuartransacao.application.ports.out.ContaPort;
@@ -27,11 +27,7 @@ public class EfetuarTransacaoService implements EfetuarTransacaoUseCase {
     private final MeterRegistry meterRegistry;
     private Timer transacaoTimer;
 
-    public EfetuarTransacaoService(
-            ContaPort contaPort,
-            TransacaoStoragePort transacaoStoragePort,
-            MeterRegistry meterRegistry
-    ) {
+    public EfetuarTransacaoService(ContaPort contaPort, TransacaoStoragePort transacaoStoragePort, MeterRegistry meterRegistry) {
         this.contaPort = contaPort;
         this.transacaoStoragePort = transacaoStoragePort;
         this.meterRegistry = meterRegistry;

@@ -1,4 +1,4 @@
-package com.itau.efetuartransacao.adapter.in.rest.dto;
+package com.itau.efetuartransacao.adapter.in.rest.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

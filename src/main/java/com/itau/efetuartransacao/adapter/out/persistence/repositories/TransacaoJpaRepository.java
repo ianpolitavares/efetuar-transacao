@@ -1,8 +1,7 @@
-package com.itau.efetuartransacao.adapter.out.persistence;
+package com.itau.efetuartransacao.adapter.out.persistence.repositories;
 
 import com.itau.efetuartransacao.adapter.out.persistence.entity.TransacaoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 

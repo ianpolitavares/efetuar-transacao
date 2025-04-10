@@ -38,6 +38,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
     }
 
+    @ExceptionHandler(LimiteExcedidoException.class)
+    public ResponseEntity<String> handleLimiteExcedido(LimiteExcedidoException ex) {
+        log.warn("Limite excedido: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {
@@ -46,10 +51,5 @@ public class GlobalExceptionHandler {
                 .body("Erro inesperado: " + ex.getMessage());
     }
 
-    @ExceptionHandler(LimiteExcedidoException.class)
-    public ResponseEntity<String> handleLimiteExcedido(LimiteExcedidoException ex) {
-        log.warn("Limite excedido: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
-    }
 
 }
