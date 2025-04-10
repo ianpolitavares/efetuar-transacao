@@ -1,7 +1,6 @@
-package com.itau.efetuartransacao.adapter.in.rest;
+package com.itau.efetuartransacao.adapter.in.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itau.efetuartransacao.adapter.in.rest.controller.TransacaoController;
 import com.itau.efetuartransacao.adapter.in.rest.dto.request.TransacaoRequest;
 import com.itau.efetuartransacao.application.ports.in.EfetuarTransacaoUseCase;
 import com.itau.efetuartransacao.application.core.domain.exception.ContaNaoEncontradaException;

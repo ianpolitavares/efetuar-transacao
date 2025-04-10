@@ -114,38 +114,40 @@ Executados com `TransacaoControllerConcurrencyTest`, simulando concorrência com
 
 ```mermaid
 sequenceDiagram
-    participant U as Usuário
-    participant C as TransacaoController (in)
-    participant S as EfetuarTransacaoService (core)
-    participant CP as ContaPort
-    participant TP as TransacaoStoragePort
-    participant CRA as ContaRepositoryAdapter (out)
-    participant TSA as TransacaoStorageAdapter (out)
+    participant Cliente
+    participant TransacaoController
+    participant EfetuarTransacaoService
+    participant ContaPort
+    participant TransacaoStoragePort
 
-    U->>C: POST /api/v1/transacoes
-    C->>S: efetuarTransacao(request)
+    Cliente->>TransacaoController: POST /api/v1/transacoes
+    TransacaoController->>EfetuarTransacaoService: efetuarTransacao(idOrigem, idDestino, valor)
 
-    S->>CP: findById(idOrigem)
-    CP->>CRA: findById(idOrigem)
-    CRA-->>CP: Conta origem
+    EfetuarTransacaoService->>ContaPort: findById(idOrigem)
+    ContaPort-->>EfetuarTransacaoService: Conta origem
 
-    S->>CP: findById(idDestino)
-    CP->>CRA: findById(idDestino)
-    CRA-->>CP: Conta destino
+    EfetuarTransacaoService->>ContaPort: findById(idDestino)
+    ContaPort-->>EfetuarTransacaoService: Conta destino
 
-    S->>CP: update(contaOrigem)
-    CP->>CRA: save(contaOrigem)
+    alt Conta não encontrada
+        EfetuarTransacaoService-->>TransacaoController: throw ContaNaoEncontradaException
+        TransacaoController-->>Cliente: 404 Not Found
+    else Saldo insuficiente
+        EfetuarTransacaoService-->>TransacaoController: throw SaldoInsuficienteException
+        TransacaoController-->>Cliente: 400 Bad Request
+    else Sucesso
+        EfetuarTransacaoService->>Conta: debitar(valor)
+        EfetuarTransacaoService->>Conta: creditar(valor)
 
-    S->>CP: update(contaDestino)
-    CP->>CRA: save(contaDestino)
+        EfetuarTransacaoService->>ContaPort: update(contaOrigem)
+        EfetuarTransacaoService->>ContaPort: update(contaDestino)
 
-    S->>TP: save(transacao)
-    TP->>TSA: save(transacao)
+        EfetuarTransacaoService->>TransacaoStoragePort: save(transacao)
 
-    TSA-->>TP: void
-    TP-->>S: void
-    S-->>C: Transacao CONCLUIDA
-    C-->>U: 200 OK + JSON
+        EfetuarTransacaoService-->>TransacaoController: Transacao (status CONCLUIDA)
+        TransacaoController-->>Cliente: 200 OK + TransacaoResponse
+    end
+
 ```
 
 ---

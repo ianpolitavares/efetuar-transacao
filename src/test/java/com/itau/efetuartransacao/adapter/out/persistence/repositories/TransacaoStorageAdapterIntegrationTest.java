@@ -1,6 +1,5 @@
-package com.itau.efetuartransacao.adapter.out.persistence;
+package com.itau.efetuartransacao.adapter.out.persistence.repositories;
 
-import com.itau.efetuartransacao.adapter.out.persistence.repositories.TransacaoJpaRepository;
 import com.itau.efetuartransacao.application.core.domain.model.Transacao;
 import com.itau.efetuartransacao.application.core.domain.model.TransacaoStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class TransacaoStorageAdapterTest {
+class TransacaoStorageAdapterIntegrationTest {
 
     @Mock
     private TransacaoJpaRepository jpaRepository;

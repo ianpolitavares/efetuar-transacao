@@ -1,4 +1,4 @@
-package com.itau.efetuartransacao.adapter.in.rest;
+package com.itau.efetuartransacao.adapter.in.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itau.efetuartransacao.adapter.in.rest.dto.request.TransacaoRequest;

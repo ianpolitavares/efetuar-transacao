@@ -1,6 +1,6 @@
 package com.itau.efetuartransacao.adapter.out.mock;
 
-import com.itau.efetuartransacao.adapter.out.persistence.ContaRepositoryAdapter;
+import com.itau.efetuartransacao.adapter.out.persistence.repositories.ContaRepositoryAdapter;
 import com.itau.efetuartransacao.application.core.domain.model.Conta;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
