@@ -142,22 +142,33 @@ sequenceDiagram
             TransacaoController-->>Cliente: 404 Not Found
         else Saldo insuficiente
             EfetuarTransacaoService-->>TransacaoController: throw SaldoInsuficienteException
-            TransacaoController-->>Cliente: 400 Bad Request
+            TransacaoController-->>Cliente: 422 Unprocessable Entity
         else Sucesso
-            EfetuarTransacaoService->>Conta: debitar(valor)
-            EfetuarTransacaoService->>Conta: creditar(valor)
+            EfetuarTransacaoService->>EfetuarTransacaoService: contaOrigem.debitar(valor)
+            EfetuarTransacaoService->>EfetuarTransacaoService: contaDestino.creditar(valor)
 
             EfetuarTransacaoService->>ContaPort: update(contaOrigem)
-            EfetuarTransacaoService->>ContaPort: update(contaDestino)
-
-            EfetuarTransacaoService->>TransacaoStoragePort: save(transacao)
-            alt Concorrência detectada
-                TransacaoStoragePort-->>EfetuarTransacaoService: throw OptimisticLockException
+            alt Concorrência origem
+                ContaPort-->>EfetuarTransacaoService: throw OptimisticLockException
                 EfetuarTransacaoService-->>TransacaoController: erro de concorrência
                 TransacaoController-->>Cliente: 409 Conflict
-            else Sucesso
-                EfetuarTransacaoService-->>TransacaoController: Transacao (status CONCLUIDA)
-                TransacaoController-->>Cliente: 200 OK + TransacaoResponse
+            else Sucesso origem
+                ContaPort-->>EfetuarTransacaoService: OK
+
+                EfetuarTransacaoService->>ContaPort: update(contaDestino)
+                alt Concorrência destino
+                    ContaPort-->>EfetuarTransacaoService: throw OptimisticLockException
+                    EfetuarTransacaoService-->>TransacaoController: erro de concorrência
+                    TransacaoController-->>Cliente: 409 Conflict
+                else Sucesso destino
+                    ContaPort-->>EfetuarTransacaoService: OK
+
+                    EfetuarTransacaoService->>TransacaoStoragePort: save(transacao)
+                    TransacaoStoragePort-->>EfetuarTransacaoService: OK
+
+                    EfetuarTransacaoService-->>TransacaoController: Transacao (status CONCLUIDA)
+                    TransacaoController-->>Cliente: 200 OK + TransacaoResponse
+                end
             end
         end
     end
