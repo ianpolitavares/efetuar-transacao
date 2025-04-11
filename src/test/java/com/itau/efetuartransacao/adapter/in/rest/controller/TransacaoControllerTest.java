@@ -47,9 +47,10 @@ public class TransacaoControllerTest {
         mockResponse.setValor(150.0);
         mockResponse.setStatus(TransacaoStatus.CONCLUIDA);
 
-        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any())).thenReturn(mockResponse);
+        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any(), any())).thenReturn(mockResponse);
 
         mockMvc.perform(post("/api/v1/transacoes")
+                        .header("Idempotency-Key", "teste-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -64,12 +65,14 @@ public class TransacaoControllerTest {
         TransacaoRequest request = new TransacaoRequest(); // todos os campos nulos
 
         mockMvc.perform(post("/api/v1/transacoes")
+                        .header("Idempotency-Key", "teste-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.idContaOrigem").exists())
-                .andExpect(jsonPath("$.idContaDestino").exists())
-                .andExpect(jsonPath("$.valor").exists());
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.path").value("/api/v1/transacoes"));
     }
 
     @Test
@@ -79,14 +82,18 @@ public class TransacaoControllerTest {
         request.setIdContaDestino("2");
         request.setValor(100.0);
 
-        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any()))
+        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any(), any()))
                 .thenThrow(new ContaNaoEncontradaException("Conta nao encontrada"));
 
         mockMvc.perform(post("/api/v1/transacoes")
+                        .header("Idempotency-Key", "teste-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Conta nao encontrada"));
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.message").value("Conta nao encontrada"))
+                .andExpect(jsonPath("$.path").value("/api/v1/transacoes"));
     }
 
     @Test
@@ -96,14 +103,18 @@ public class TransacaoControllerTest {
         request.setIdContaDestino("2");
         request.setValor(9999.0);
 
-        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any()))
+        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any(), any()))
                 .thenThrow(new SaldoInsuficienteException("Saldo insuficiente"));
 
         mockMvc.perform(post("/api/v1/transacoes")
+                        .header("Idempotency-Key", "teste-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().string("Saldo insuficiente"));
+                .andExpect(jsonPath("$.status").value(422))
+                .andExpect(jsonPath("$.error").value("Unprocessable Entity"))
+                .andExpect(jsonPath("$.message").value("Saldo insuficiente"))
+                .andExpect(jsonPath("$.path").value("/api/v1/transacoes"));
     }
 
     @Test
@@ -113,13 +124,34 @@ public class TransacaoControllerTest {
         request.setIdContaDestino("2");
         request.setValor(100.0);
 
-        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any()))
+        Mockito.when(transacaoService.efetuarTransacao(any(), any(), any(), any()))
                 .thenThrow(new RuntimeException("Erro genérico"));
+
+        mockMvc.perform(post("/api/v1/transacoes")
+                        .header("Idempotency-Key", "teste-123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.error").value("Internal Server Error"))
+                .andExpect(jsonPath("$.message").value("Erro inesperado: Erro genérico"))
+                .andExpect(jsonPath("$.path").value("/api/v1/transacoes"));
+    }
+
+    @Test
+    void deveRetornar400QuandoIdempotencyKeyNaoInformado() throws Exception {
+        TransacaoRequest request = new TransacaoRequest();
+        request.setIdContaOrigem("1");
+        request.setIdContaDestino("2");
+        request.setValor(100.0);
 
         mockMvc.perform(post("/api/v1/transacoes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Erro inesperado: Erro genérico"));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message").value("Header obrigatorio nao informado: Idempotency-Key"))
+                .andExpect(jsonPath("$.path").value("/api/v1/transacoes"));
     }
 }

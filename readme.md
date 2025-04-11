@@ -117,37 +117,50 @@ sequenceDiagram
     participant Cliente
     participant TransacaoController
     participant EfetuarTransacaoService
+    participant IdempotencyKeyRepository
     participant ContaPort
     participant TransacaoStoragePort
 
     Cliente->>TransacaoController: POST /api/v1/transacoes
-    TransacaoController->>EfetuarTransacaoService: efetuarTransacao(idOrigem, idDestino, valor)
+    TransacaoController->>EfetuarTransacaoService: efetuarTransacao(idOrigem, idDestino, valor, idempotency-key)
 
-    EfetuarTransacaoService->>ContaPort: findById(idOrigem)
-    ContaPort-->>EfetuarTransacaoService: Conta origem
+    EfetuarTransacaoService->>IdempotencyKeyRepository: existsById(idempotency-key)
+    alt Chave já existe
+        EfetuarTransacaoService-->>TransacaoController: throw TransacaoDuplicadaException
+        TransacaoController-->>Cliente: 409 Conflict
+    else Nova transação
+        EfetuarTransacaoService->>IdempotencyKeyRepository: save(idempotency-key)
 
-    EfetuarTransacaoService->>ContaPort: findById(idDestino)
-    ContaPort-->>EfetuarTransacaoService: Conta destino
+        EfetuarTransacaoService->>ContaPort: findById(idOrigem)
+        ContaPort-->>EfetuarTransacaoService: Conta origem
 
-    alt Conta não encontrada
-        EfetuarTransacaoService-->>TransacaoController: throw ContaNaoEncontradaException
-        TransacaoController-->>Cliente: 404 Not Found
-    else Saldo insuficiente
-        EfetuarTransacaoService-->>TransacaoController: throw SaldoInsuficienteException
-        TransacaoController-->>Cliente: 400 Bad Request
-    else Sucesso
-        EfetuarTransacaoService->>Conta: debitar(valor)
-        EfetuarTransacaoService->>Conta: creditar(valor)
+        EfetuarTransacaoService->>ContaPort: findById(idDestino)
+        ContaPort-->>EfetuarTransacaoService: Conta destino
 
-        EfetuarTransacaoService->>ContaPort: update(contaOrigem)
-        EfetuarTransacaoService->>ContaPort: update(contaDestino)
+        alt Conta não encontrada
+            EfetuarTransacaoService-->>TransacaoController: throw ContaNaoEncontradaException
+            TransacaoController-->>Cliente: 404 Not Found
+        else Saldo insuficiente
+            EfetuarTransacaoService-->>TransacaoController: throw SaldoInsuficienteException
+            TransacaoController-->>Cliente: 400 Bad Request
+        else Sucesso
+            EfetuarTransacaoService->>Conta: debitar(valor)
+            EfetuarTransacaoService->>Conta: creditar(valor)
 
-        EfetuarTransacaoService->>TransacaoStoragePort: save(transacao)
+            EfetuarTransacaoService->>ContaPort: update(contaOrigem)
+            EfetuarTransacaoService->>ContaPort: update(contaDestino)
 
-        EfetuarTransacaoService-->>TransacaoController: Transacao (status CONCLUIDA)
-        TransacaoController-->>Cliente: 200 OK + TransacaoResponse
+            EfetuarTransacaoService->>TransacaoStoragePort: save(transacao)
+            alt Concorrência detectada
+                TransacaoStoragePort-->>EfetuarTransacaoService: throw OptimisticLockException
+                EfetuarTransacaoService-->>TransacaoController: erro de concorrência
+                TransacaoController-->>Cliente: 409 Conflict
+            else Sucesso
+                EfetuarTransacaoService-->>TransacaoController: Transacao (status CONCLUIDA)
+                TransacaoController-->>Cliente: 200 OK + TransacaoResponse
+            end
+        end
     end
-
 ```
 
 ---

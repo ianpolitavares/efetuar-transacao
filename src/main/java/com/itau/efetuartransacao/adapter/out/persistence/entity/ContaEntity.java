@@ -20,4 +20,8 @@ public class ContaEntity {
     private Double limite;
 
     private Double limiteUtilizado;
+
+    @Version
+    private Long versao;
+
 }

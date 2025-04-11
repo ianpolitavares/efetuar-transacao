@@ -4,10 +4,13 @@ import com.itau.efetuartransacao.adapter.in.rest.dto.response.TransacaoResponse;
 import com.itau.efetuartransacao.application.core.domain.model.Transacao;
 import com.itau.efetuartransacao.application.ports.in.EfetuarTransacaoUseCase;
 import com.itau.efetuartransacao.adapter.in.rest.dto.request.TransacaoRequest;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,24 +28,29 @@ public class TransacaoController {
      * Endpoint para efetuar uma transação.
      *
      * @param transacaoRequest Objeto contendo idContaOrigem, idContaDestino e valor
+     * @param idempotencyKey   Chave de idempotência passada via header
      * @return Detalhes da transação realizada (ou erro, em caso de falha)
      */
     @PostMapping
-    public ResponseEntity<TransacaoResponse> efetuarTransacao(@Valid @RequestBody TransacaoRequest transacaoRequest) {
+    public ResponseEntity<TransacaoResponse> efetuarTransacao(
+            @Valid @RequestBody TransacaoRequest transacaoRequest,
+            @RequestHeader(name = "Idempotency-Key", required = true) String idempotencyKey
+    ) {
 
-        log.info("Iniciando transacao de {} -> {} | valor: {}",
+        log.info("Iniciando transacao de {} -> {} | valor: {} | idempotencyKey: {}",
                 transacaoRequest.getIdContaOrigem(),
                 transacaoRequest.getIdContaDestino(),
-                transacaoRequest.getValor());
+                transacaoRequest.getValor(),
+                idempotencyKey);
 
         Transacao transacao = transacaoUseCase.efetuarTransacao(
                 transacaoRequest.getIdContaOrigem(),
                 transacaoRequest.getIdContaDestino(),
-                transacaoRequest.getValor()
+                transacaoRequest.getValor(),
+                idempotencyKey
         );
 
         log.info("Transacao finalizada: {}", transacao);
-        //return ResponseEntity.status(HttpStatus.OK).body(transacao);
-        return ResponseEntity.ok(TransacaoResponse.fromDomain(transacao));
+        return ResponseEntity.status(HttpStatus.OK).body(TransacaoResponse.fromDomain(transacao));
     }
 }

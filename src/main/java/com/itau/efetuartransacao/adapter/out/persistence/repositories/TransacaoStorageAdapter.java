@@ -18,14 +18,13 @@ public class TransacaoStorageAdapter implements TransacaoStoragePort {
 
     @Override
     public void save(Transacao transacao) {
-        TransacaoEntity entity = new TransacaoEntity(
-                transacao.getIdTransacao(),
-                transacao.getIdContaOrigem(),
-                transacao.getIdContaDestino(),
-                transacao.getValor(),
-                transacao.getDataHora(),
-                transacao.getStatus()
-        );
+        TransacaoEntity entity = new TransacaoEntity();
+        entity.setIdTransacao(transacao.getIdTransacao());
+        entity.setIdContaOrigem(transacao.getIdContaOrigem());
+        entity.setIdContaDestino(transacao.getIdContaDestino());
+        entity.setValor(transacao.getValor());
+        entity.setDataHora(transacao.getDataHora());
+        entity.setStatus(transacao.getStatus());
         repository.save(entity);
     }
 }

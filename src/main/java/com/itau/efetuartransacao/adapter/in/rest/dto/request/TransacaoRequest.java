@@ -15,7 +15,7 @@ import lombok.Data;
 @Data
 public class TransacaoRequest {
 
-    @NotBlank(message = "O id da conta Origem é obrigatório.")
+    @NotBlank(message = "O id da conta Origem e obrigatorio.")
     private String idContaOrigem;
 
     @NotBlank(message = "O id da conta Destino e obrigatorio.")

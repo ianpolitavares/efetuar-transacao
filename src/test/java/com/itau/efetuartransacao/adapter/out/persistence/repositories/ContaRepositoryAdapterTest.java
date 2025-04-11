@@ -26,7 +26,7 @@ public class ContaRepositoryAdapterTest {
     @Test
     void testFindByIdComContaExistente() {
         // Arrange
-        ContaEntity entity = new ContaEntity("123", 100.0, 500.0, 0.0);
+        ContaEntity entity = new ContaEntity("123", 100.0, 500.0, 0.0, 0L);
         when(jpaRepository.findById("123")).thenReturn(Optional.of(entity));
 
         // Act
@@ -53,11 +53,12 @@ public class ContaRepositoryAdapterTest {
     void testUpdateSalvaContaCorretamente() {
         // Arrange
         Conta conta = new Conta("456", 200.0, 400.0, 50.0);
+        ContaEntity contaExistente = new ContaEntity("456", 300.0, 500.0, 20.0, 0L);
 
-        // Act
+        when(jpaRepository.findById("456")).thenReturn(Optional.of(contaExistente));
+
         adapter.update(conta);
 
-        // Assert
         ArgumentCaptor<ContaEntity> captor = ArgumentCaptor.forClass(ContaEntity.class);
         verify(jpaRepository, times(1)).save(captor.capture());
 
@@ -67,4 +68,5 @@ public class ContaRepositoryAdapterTest {
         assertEquals(400.0, salvo.getLimite());
         assertEquals(50.0, salvo.getLimiteUtilizado());
     }
+
 }

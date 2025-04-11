@@ -1,6 +1,8 @@
 package com.itau.efetuartransacao.adapter.in.rest.dto;
 
 import com.itau.efetuartransacao.adapter.in.rest.dto.request.TransacaoRequest;
+import com.itau.efetuartransacao.adapter.in.rest.dto.response.TransacaoResponse;
+import com.itau.efetuartransacao.application.core.domain.model.Transacao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -78,4 +80,5 @@ public class TransacaoRequestTest {
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("valor")));
     }
+
 }
